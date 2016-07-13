@@ -144,34 +144,31 @@
         e.preventDefault()
 
         var $this = $(this)
-        var fields = $this.serializeArray()
+        var f = {}
 
-        var link = fields[0].value
-        var https = fields[1].value
-        var utm_campaign = fields[2].value
-        var utm_medium = fields[3].value
-        var utm_source = fields[4].value
-        var utm_content = fields[5].value
+        $.each($this.serializeArray(), function (i, el) {
+          f[el.name] = el.value
+        })
 
-        if (!link || !utm_campaign || !utm_medium || !utm_source)
+        if (!f.link || !f.utm_campaign || !f.utm_medium || !f.utm_source)
           return alert('missing required fields')
 
         var params = {
-          utm_source: utm_source,
-          utm_medium: utm_medium,
-          utm_campaign: utm_campaign,
+          utm_source: f.utm_source,
+          utm_medium: f.utm_medium,
+          utm_campaign: f.utm_campaign,
         }
 
-        if (!!utm_content)
-          params.utm_content = utm_content
+        if (!!f.utm_content)
+          params.utm_content = f.utm_content
 
         var a = document.createElement('a')
-        a.href = link
+        a.href = f.link
         a.search = [a.search, $.param(params)]
           .filter(function (el) {return !$.isEmptyObject(el)})
           .join('&')
 
-        if (!!https)
+        if (!!f.https)
           a.protocol = "https:"
 
         $('code#result').text(a.href)
