@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>网址构建工具</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/pure-min.css">
+  <style>
+    .pure-form input[type=text],
+    .pure-form select {
+      box-shadow: none;
+    }
+    .text-muted {
+      color: #818a91;
+    }
+    .help-text {
+      display: block;
+      margin: 0 0 0 11.6rem;
+      padding: 0.5em 0 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="pure-g">
+    <div class="pure-u-1">
+      <form class="pure-form pure-form-aligned url-builder">
+        <div class="pure-controls">
+          <h2>网址构建工具</h2>
+        </div>
+        <fieldset>
+          <div class="pure-control-group">
+            <label for="link">
+              原始链接<br>
+              <small class="text-muted">link</small>
+            </label>
+            <input type="url" name="link" placeholder="https://simplecms.xiachufang.com/posts/1234/" style="width: 50%" required>
+            <small class="text-muted help-text">
+              <strong>必填</strong> -
+              目标页面的原始网址
+            </small>
+          </div>
+
+          <div class="pure-control-group">
+            <label for="">
+              强制使用 HTTPS<br>
+              <small class="text-muted">force https</small>
+            </label>
+            <input type="checkbox" name="https" checked>
+            <small class="text-muted help-text">
+              <strong>建议</strong> -
+              生成 HTTPS 链接防止运营商劫持
+            </small>
+          </div>
+
+          <div class="pure-control-group">
+            <label for="utm_campaign">
+              广告名称<br>
+              <small class="text-muted">utm_campaign</small>
+            </label>
+            <input type="text" name="utm_campaign" value="2016-717" required>
+            <small class="text-muted help-text">
+              <strong>必填</strong> -
+              用于区分具体某个推广项目，比如某场电商、市场活动，厨房周刊某期，应尽量简明、准确：<code>weekly236</code> / <code>2016-717</code> / <code>20160520yiguo</code>
+            </small>
+          </div>
+
+          <div class="pure-control-group">
+            <label for="utm_medium">
+              广告媒介<br>
+              <small class="text-muted">utm_medium</small>
+            </label>
+            <select name="utm_medium" required>
+              <option value="">请选择...</option>
+
+              <optgroup label="App">
+                <option value="issue">App 首页瀑布流 (issue)</option>
+                <option value="push">推送 (push)</option>
+                <option value="event">话题描述 (event)</option>
+                <option value="ectabbig">市集独占 (ectabbig)</option>
+              </optgroup>
+
+              <optgroup label="社交平台">
+                <option value="weibo">单条微博 (weibo)</option>
+                <option value="weixinmp_article">公众号文章 (weixinmp_article)</option>
+                <option value="weixinmp_btn">公众号菜单 (weixinmp_btn)</option>
+              </optgroup>
+
+              <optgroup label="App 广告位">
+                <option value="splash_ad">App 闪屏 (splash_ad)</option>
+                <option value="launch_ad">App 开屏 (launch_ad)</option>
+                <option value="recipe_bottom_text_ad">App 菜谱底部文字广告 (recipe_bottom_text_ad)</option>
+                <option value="homepage_banner_ad1">App 首页 Banner 1# (homepage_banner_ad1)</option>
+                <option value="homepage_banner_ad2">App 首页 Banner 2# (homepage_banner_ad2)</option>
+              </optgroup>
+
+              <optgroup label="百度 SSP 广告位">
+                <option value="mobile_bottom_ad">M 站底部横通 (mobile_bottom_ad)</option>
+                <option value="pc_bottom_ad">PC 底部横通 (pc_bottom_ad)</option>
+              </optgroup>
+            </select>
+            <small class="text-muted help-text">
+              <strong>必填</strong> -
+              用于区分流量媒介，亦即流量入口具体是种什么东西，比如不同类型的广告位、微博
+            </small>
+          </div>
+
+          <div class="pure-control-group">
+            <label for="utm_source">
+              广告来源<br>
+              <small class="text-muted">utm_source</small>
+            </label>
+            <input type="text" name="utm_source" value="xiachufang" required>
+            <small class="text-muted help-text">
+              <strong>必填</strong> -
+              用于区分流量的来源，媒介由谁控制，来源就是谁，亦即媒介的控制者，比如下厨房、某个具体合作伙伴：<code>xiachufang</code> / <code>xiaomi</code> / <code>smzdm</code>
+            </small>
+          </div>
+
+          <div class="pure-control-group">
+            <label for="utm_content">
+              广告内容<br>
+              <small class="text-muted">utm_content</small>
+            </label>
+            <input type="text" name="utm_content">
+            <small class="text-muted help-text">
+              <strong>选填</strong> -
+              用于 A/B 测试或用于区分同一次推广、同一种媒介上的不同广告：<code>717-launch1</code> / <code>717-launch2</code> / <code>717-push1</code>
+            </small>
+          </div>
+
+          <div class="pure-controls">
+            <button type="submit" class="pure-button pure-button-primary">生成网址</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="pure-u-1">
+      <pre style="padding: 1em; background: #f7f7f7"><code id="result">&nbsp;</code></pre>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.js"></script>
+  <script>
+    (function () {
+      $('form.url-builder').submit(function (e) {
+        e.preventDefault()
+
+        var $this = $(this)
+        var fields = $this.serializeArray()
+
+        var link = fields[0].value
+        var https = fields[1].value
+        var utm_campaign = fields[2].value
+        var utm_medium = fields[3].value
+        var utm_source = fields[4].value
+        var utm_content = fields[5].value
+
+        if (!link || !utm_campaign || !utm_medium || !utm_source)
+          return alert('missing required fields')
+
+        var params = {
+          utm_source: utm_source,
+          utm_medium: utm_medium,
+          utm_campaign: utm_campaign,
+        }
+
+        if (!!utm_content)
+          params.utm_content = utm_content
+
+        var a = document.createElement('a')
+        a.href = link
+        a.search = [a.search, $.param(params)]
+          .filter(function (el) {return !$.isEmptyObject(el)})
+          .join('&')
+
+        if (!!https)
+          a.protocol = "https:"
+
+        $('code#result').text(a.href)
+      })
+    })();
+  </script>
+</body>
+</html>
