@@ -9,6 +9,20 @@
     .pure-form select {
       box-shadow: none;
     }
+    .pure-control-group.focus {
+      position: relative;
+    }
+    .pure-control-group.focus:before {
+      border: 1px solid #129FEA;
+      border-radius: 4px;
+      content: "";
+      display: block;
+      height: 112%;
+      left: 2%;
+      position: absolute;
+      top: -8%;
+      width: 94%
+    }
     .text-muted {
       color: #818a91;
     }
@@ -137,9 +151,10 @@
       <pre style="padding: 1em; background: #f7f7f7"><code id="result">&nbsp;</code></pre>
     </div>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js"></script>
   <script>
     (function () {
+      // add form submit listener for generating url
       $('form.url-builder').submit(function (e) {
         e.preventDefault()
 
@@ -151,7 +166,7 @@
         })
 
         if (!f.link || !f.utm_campaign || !f.utm_medium || !f.utm_source)
-          return alert('missing required fields')
+          return console.log('missing required fileds')
 
         var params = {
           utm_source: f.utm_source,
@@ -169,9 +184,42 @@
           .join('&')
 
         if (!!f.https)
-          a.protocol = "https:"
+          a.protocol = 'https:'
 
-        $('code#result').text(a.href)
+        $('code#result').text('<!-- ' + f.utm_medium + ' -->\n' + a.href)
+      })
+
+      // on-demand build
+      $(function () {
+        try {
+          var f = JSON.parse(atob(location.hash.substring(1)))
+        } catch (e) {
+          return console.log('no on-demand build or bad hash')
+        }
+
+        // clear hash
+        history.replaceState('', document.title, window.location.pathname);
+
+        $('input[name=link]').val(f.link)
+        $('input[name=utm_campaign]').val(f.utm_campaign)
+
+        $('select[name=utm_medium] option').each(function (index, item) {
+          if (item.value === f.utm_medium)
+            item.selected = true
+        })
+
+        $('input[name=utm_source]').val(f.utm_source)
+        $('form.url-builder button[type=submit]').click()
+
+        // highlight utm_medium on succussful build
+        if (!f.link || !f.utm_campaign || !f.utm_medium || !f.utm_source)
+          return
+        var $highlight = $('select[name=utm_medium]').parent()
+        // blink effect
+        var interval = setInterval(function () { $highlight.toggleClass('focus')}, 100)
+        setTimeout(function () { clearInterval(interval) }, 900)
+        // clear highlight eventually
+        setTimeout(function () { $('.pure-control-group.focus').removeClass('focus')}, 7000)
       })
     })();
   </script>
