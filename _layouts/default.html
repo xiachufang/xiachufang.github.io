@@ -80,7 +80,9 @@
       <div class="btn btn-close"><span class="fa fa-times"></span></div>
     </div>
     <ul class="topbar">
+    {% if page.date %}
       <li><u>D</u>ate: {{ page.date | date: '%Y-%m-%d' }}</li>
+    {% endif %}
     {% if page.author %}
       <li><u>A</u>uthor: {{ page.author }}</li>
     {% endif %}
