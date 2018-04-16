@@ -3,3 +3,9 @@ database:
 
 postmortem:
   name: postmortem
+
+andorid:
+  name: android
+
+ios:
+  name: ios
