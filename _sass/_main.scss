@@ -2,6 +2,11 @@ body {
 	background: #008082;
 	font-family: sans-serif, serif, monospace;
 	font-size: 13px;
+	line-height: 1.2;
+}
+
+pre, code, tt {
+	font-family: monospace;
 }
 
 .wrapper, .content {
@@ -204,7 +209,7 @@ ul.topbar {
 	overflow-x: scroll;
 
 	p {
-		line-height: 150%;
+		line-height: 1.5;
 		margin-bottom: 15px;
 	}
 
@@ -287,10 +292,6 @@ ul.topbar {
 	table, th, td {
 		border: 1px solid #222222;
 		padding: 2px;
-	}
-
-	pre {
-		margin-bottom: 15px;
 	}
 }
 .hljs {
