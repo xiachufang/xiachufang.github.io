@@ -1,0 +1,39 @@
+
+# Variables
+name: K1tchen
+description: Xiachufang Engineering Blog
+url: xiachufang.github.io
+
+# Handling Reading
+exclude:
+  - .git/
+  - .github/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - README.md
+  - LICENSE
+keep_files:
+  - utm-parameters
+
+# Filtering Content
+show_drafts: null
+limit_posts: 0
+future: false
+unpublished: false
+
+# Outputting
+permalink: /:year-:month-:day/:title
+timezone: Asia/Shanghai
+
+# Serving
+baseurl:
+
+# Sass
+sass:
+  sass_dir: _sass
+  style: :compressed

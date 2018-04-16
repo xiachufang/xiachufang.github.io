@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" href="/assets/css/atom-one-light.css">
+{% if page.title %}
+  <title>{{ page.title }}</title>
+  <link rel="stylesheet" type="text/css" href="/assets/css/002.css">
+{% else %}
+  <title>{{ site.name }}</title>
+  <link rel="stylesheet" type="text/css" href="/assets/css/001.css">
+{% endif %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="shortcut icon" href="/assets/img/favicon.ico">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="default_title">
+      <img src="/assets/img/mycomputer.png">
+      {% if page.tag %}
+        <h1>{{ page.tag }}</h1>
+      {% else %}
+        <h1>{{ site.name }}</h1>
+      {% endif %}
+    </div>
+
+    {% include topbar.html %}
+
+    <div class="tag_list">
+      <ul id="tag-list">
+        <li><a href="/" ><img src="/assets/img/disk.png">{{ site.name }} (C:)</a>
+      <ul>
+      {% assign tags = site.tags | sort %}
+      {% for tag in tags %}
+        <li><a href="/tag/{{ tag | first | slugify }}/" title="{{ tag[0] | replace:'-', ' ' }}"><img src="/assets/img/folder.ico">{{ tag[0] | replace:'-', ' ' }}</a></li>
+      {% endfor %}
+      </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="post_list">
+      <ul>
+      {% for post in site.posts %}
+        <li>
+          <a href="{{ post.url }}" title="{{ post.title }}">
+            <img src="/assets/img/file.ico" title="{{ post.title }}">
+            <div class="filename">{{ post.title }}</div>
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+    </div>
+
+    <div class="post_total">
+    {% if page.tag %}
+      <div class="left">{{ site.tags[page.tag] | size }} object(s)</div>
+    {% else %}
+      <div class="left">{{ site.posts | size }} object(s)</div>
+    {% endif %}
+      <div class="right">&nbsp;</div>
+    </div>
+  </div>
+{% if page.title %}
+  <div class="content">
+    <div class="post_title">
+      <img src="/assets/img/file.png">
+      <h1>{{  page.title  }}</h1>
+      <div class="btn btn-min"><span class="fa fa-window-minimize"></span></div>
+      <div class="btn btn-max"><span class="fa fa-window-maximize"></span></div>
+      <div class="btn btn-close"><span class="fa fa-times"></span></div>
+    </div>
+    <ul class="topbar">
+      <li><u>D</u>ate: {{ page.date | date: '%Y-%m-%d' }}</li>
+    {% if page.author %}
+      <li><u>A</u>uthor: {{ page.author }}</li>
+    {% endif %}
+    </ul>
+    <div class="post_content">
+      {{ content }}
+    </div>
+  </div>
+{% endif %}
+  <script src="/assets/js/001.js"></script>
+  <div class="footer">
+    <p>2018 © xiachufang.com</p>
+  </div>
+</body>
+</html>
+<!-- template: windows-95 by http://github.com/h01000110 -->
