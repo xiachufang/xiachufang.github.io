@@ -11,8 +11,7 @@ pre, code, tt {
 
 .wrapper, .content {
 	width: 800px;
-	margin: auto;
-	margin-top: 20px;
+	margin: 20px auto;
 	background: #bfb8bf;
 	border: 2px solid;
 	border-color: #fff8ff #000000 #000000 #fff8ff;
@@ -194,6 +193,7 @@ ul.topbar {
 		margin-left: 2px;
 	}
 	.right {
+		text-align: right;
 		width: 64%;
 		margin-right: 2px;
 	}
