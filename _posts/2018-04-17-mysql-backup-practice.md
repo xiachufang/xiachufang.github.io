@@ -43,7 +43,7 @@ tags:
 
 冗余方面，跨可用区主备架构提供了第一层保障，即使主节点数据库文件被误删、宿主机灭失、甚至所在可用区灭失，备节点也仍保有几乎全部数据。Percona XtraBackup 支持热备份，主节点无需停机，简单几步操作即可创建一个 slave，让架设主备变得得心应手。
 
-```
+```shell
 # on master, take a backup to /backup/mysql
 root@master $ juicefs mount <volume> /backup
 root@master $ innobackupex --no-timestamp --slave-info /backup/mysql/
@@ -84,7 +84,7 @@ root@slave $ chown -R mysql:mysql /path/to/mysql/datadir
 
 下厨房基于 Docker 和 JuiceFS 快照构建了一套简单易用的备份测试方案：主要包括在云主机上运行的，执行创建快照、启动容器及清理快照的 verify-backup.sh，
 
-```
+```bash
 #!/usr/bin/env bash
 juicefs snapshot /backup/mysql /backup/snapshot
 
@@ -102,7 +102,7 @@ juicefs snapshot -d /backup/snapshot
 
 以及在容器中运行的，执行准备备份、配置 replication 并报告 replication 状态的 report.sh。
 
-```
+```bash
 #!/usr/bin/env bash
 set -e
 
@@ -160,7 +160,7 @@ exit $?
 
 在备份完成后，通过定时任务，或其他方式触发 verify-backup.sh 运行。如果备份验证成功，脚本应打印出 MySQL replication 线程的状态及落后于 master 的时间，replication 线程应都处于 Running 状态，且落后于 master 的时间应在合理范围内。
 
-```
+```shell
              Slave_IO_Running: Yes
             Slave_SQL_Running: Yes
         Seconds_Behind_Master: 3625
