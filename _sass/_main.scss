@@ -450,3 +450,16 @@ ul.topbar {
 ::-webkit-scrollbar-corner {
 	background-color: #cacaca;
 } /* if both the vertical and the horizontal bars appear, then perhaps the right bottom corner also needs to be styled */
+
+// simplify embeded tweets style
+blockquote.twitter-tweet {
+  max-width: 468px;
+}
+blockquote.twitter-tweet p {
+  margin: 0 0 5px 0;
+}
+blockquote.twitter-tweet a[href^="https://twitter.com"] {
+  font-weight: normal;
+  color: #666;
+  font-size: 11px;
+}
