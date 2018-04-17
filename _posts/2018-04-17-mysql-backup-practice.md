@@ -6,7 +6,7 @@ tags:
   - database
 ---
 
-下厨房是国内最大的专注于家庭美食领域的社区，以菜谱和作品分享为核心，业务涉及电商、付费内容、短视频等，目前拥有超过 2000 万注册用户，全平台日活接近 300 万，用户上传了超过 100 万道菜谱、接近 4000 万个作品，赞和收藏量均接近 10 亿。
+[下厨房][xiachufang]是国内最大的专注于家庭美食领域的社区，以菜谱和作品分享为核心，业务涉及电商、付费内容、短视频等，目前拥有超过 2000 万注册用户，全平台日活接近 300 万，用户上传了超过 100 万道菜谱、接近 4000 万个作品，赞和收藏量均接近 10 亿。
 
 下厨房从创立已经走过 7 年时间，公司和业务都经历了很多的变化和成长，到现在仍然保持着一个精简的团队，用最务实的方案来支撑业务增长，借此机会和大家分享一些我们在 MySQL 备份方面的一些实践。
 
@@ -21,10 +21,10 @@ tags:
 
 目前使用数据库的主要姿势有：
 - SSD 硬盘
-- Percona Server 5.6 / 5.7 + InnoDB
+- [Percona Server][ps] 5.6 / 5.7 + InnoDB
 - Row-based Replication (RBR) + GTID
-- 使用 Percona Toolkit 中的 pt-online-schema-change 进行在线 schema 变更
-- 使用 Percona Monitoring and Management (PMM) 监控
+- 使用 [Percona Toolkit][pt] 中的 `pt-online-schema-change` 进行在线 schema 变更
+- 使用 [Percona Monitoring and Management][pmm] ([PMM][pmm]) 监控
 
 
 ## 冗余和备份
@@ -39,7 +39,7 @@ tags:
 
 冗余和备份是数据库管理工作的重中之重：一方面天有不测风云，从手抖删库到自然灾害，都可能导致数据库数据损失；另一方面数据是一家互联网公司最重要的资产，留得青山在，不怕没柴烧，但如果青山没了，恐怕就得散伙了。
 
-有惨痛教训在前，我们对冗余和备份格外重视，以最大限度避免数据丢失。在实践中，Percona XtraBackup 和 JuiceFS 两款工具为我们带来了极大便利。
+有惨痛教训在前，我们对冗余和备份格外重视，以最大限度避免数据丢失。在实践中，[Percona XtraBackup][px] 和 [JuiceFS][juicefs] 两款工具为我们带来了极大便利。
 
 冗余方面，跨可用区主备架构提供了第一层保障，即使主节点数据库文件被误删、宿主机灭失、甚至所在可用区灭失，备节点也仍保有几乎全部数据。Percona XtraBackup 支持热备份，主节点无需停机，简单几步操作即可创建一个 slave，让架设主备变得得心应手。
 
@@ -65,7 +65,7 @@ root@slave $ chown -R mysql:mysql /path/to/mysql/datadir
 
 备份方面，每天定时备份整库及 binlog 提供了第二层保障，在第一层保障失效，如手抖误 DROP 时，仍能恢复全部数据。但是，整库备份体积较大，每日定时备份产生的数据量相当可观。JuiceFS 依托对象存储提供了近乎无限的存储空间，十分适合备份的场景，这样一来可以按需长期保留备份而不必过多担心空间占用。我们目前的策略是保留 7 天内的 Percona XtraBackup 整库备份、3 年内的 binlog 以及 1 年内的周级 mysqldump。
 
-相比于自建 NFS，JuiceFS 是与对象存储同等级的高可用服务，它还可以实现跨云的数据冗余，便于跨地域甚至跨云传输。跨地域或跨云访问 JuiceFS 时是通过对象存储的公网出口来传输数据，带宽十分充足，我们曾在 AWS 北京从基于 UCloud UFile 的 JuiceFS 中拷贝数据，传输速度能达到 800+Mbps。
+相比于自建 NFS，[JuiceFS][juicefs] 是与对象存储同等级的高可用服务，它还可以实现跨云的数据冗余，便于跨地域甚至跨云传输。跨地域或跨云访问 JuiceFS 时是通过对象存储的公网出口来传输数据，带宽十分充足，我们曾在 AWS 北京从基于 UCloud UFile 的 JuiceFS 中拷贝数据，传输速度能达到 800+Mbps。
 
 
 ## 备份验证
@@ -80,7 +80,7 @@ root@slave $ chown -R mysql:mysql /path/to/mysql/datadir
 
 常规恢复流程中需要拷贝备份，对于体积较大的备份，拷贝过程会耗时很久，用于运行测试的目标机器也要有足够的硬盘空间，这样的话备份测试的时间成本相当高。
 
-好在 JuiceFS 提供了快照（snapshot）功能，可以为 JuiceFS 上某个路径快速创建一份快照，对快照进行的修改不会影响原路径下的文件。利用 JuiceFS 的快照功能，可以节约大量时间成本。
+好在 [JuiceFS][juicefs] 提供了快照（snapshot）功能，可以为 JuiceFS 上某个路径快速创建一份快照，对快照进行的修改不会影响原路径下的文件。利用 JuiceFS 的快照功能，可以节约大量时间成本。
 
 下厨房基于 Docker 和 JuiceFS 快照构建了一套简单易用的备份测试方案：主要包括在云主机上运行的，执行创建快照、启动容器及清理快照的 verify-backup.sh，
 
@@ -171,10 +171,23 @@ exit $?
 
 ## 总结
 
-下厨房是一家小公司，技术资源较为有限。借助 Percona 全家桶及 JuiceFS，我们快速地实现了数据库冗余和备份，以及一套简单易用的备份验证方案，从而使我们可以更加专注且有信心地推进业务开发，助力业务增长。
+下厨房是一家小公司，技术资源较为有限。借助 Percona 全家桶及 [JuiceFS][juicefs]，我们快速地实现了数据库冗余和备份，以及一套简单易用的备份验证方案，从而使我们可以更加专注且有信心地推进业务开发，助力业务增长。
 
-接下来在数据库方面，我们还将继续探索快速主备切换、延时复制、跨地域或云服务冗余、NewSQL 等。如果你也对这些方面有兴趣，欢迎[加入下厨房][1]一起探索。
+接下来在数据库方面，我们还将继续探索快速主备切换、延时复制、跨地域或云服务冗余、NewSQL 等。如果你也对这些方面有兴趣，欢迎[加入下厨房][job]一起探索。
 
 
-[1]: https://www.xiachufang.com/job/
+
+[xiachufang]: https://www.xiachufang.com
+{:target="_blank"}
+[job]: https://www.xiachufang.com/job/
+{:target="_blank"}
+[juicefs]: https://juicefs.io
+{:target="_blank"}
+[px]: https://www.percona.com/software/mysql-database/percona-xtrabackup
+{:target="_blank"}
+[pt]: https://www.percona.com/software/database-tools/percona-toolkit
+{:target="_blank"}
+[pmm]: https://www.percona.com/software/database-tools/percona-monitoring-and-management
+{:target="_blank"}
+[ps]: https://www.percona.com/software/database-tools/percona-server
 {:target="_blank"}
