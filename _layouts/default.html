@@ -24,7 +24,7 @@
       {% if page.tag %}
         <h1>{{ page.tag }}</h1>
       {% else %}
-        <h1>{{ site.name }}</h1>
+        <h1>{{ site.name }}{% if site.description %} &mdash; {{ site.description }}{% endif %}</h1>
       {% endif %}
     </div>
 
