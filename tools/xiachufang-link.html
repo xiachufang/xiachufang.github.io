@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>链接构建工具</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/pure-min.css">
+  <style>
+    .pure-form input[type=text],
+    .pure-form select {
+      box-shadow: none;
+    }
+    .pure-control-group.focus {
+      position: relative;
+    }
+    .pure-control-group.focus:before {
+      border: 1px solid #129FEA;
+      border-radius: 4px;
+      content: "";
+      display: block;
+      height: 112%;
+      left: 2%;
+      position: absolute;
+      top: -8%;
+      width: 94%;
+      z-index: -1;
+    }
+    .text-muted {
+      color: #818a91;
+    }
+    .help-text {
+      display: block;
+      margin: 0 0 0 11.6rem;
+      padding: 0.5em 0 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="pure-g">
+    <div class="pure-u-1">
+      <form class="pure-form pure-form-aligned url-builder">
+        <div class="pure-controls">
+          <h2><code>link.xiachufang.com</code> 链接构建工具</h2>
+        </div>
+        <fieldset>
+          <div class="pure-control-group">
+            <label for="link">
+              原始链接<br>
+              <small class="text-muted">link</small>
+            </label>
+            <input type="url" name="link" placeholder="https://www.example.com/" style="width: 50%" required>
+            <small class="text-muted help-text">
+              <strong>必填</strong> -
+              目标页面的原始链接
+            </small>
+          </div>
+
+          <div class="pure-control-group">
+            <label for="link">
+              链接文字<br>
+              <small class="text-muted">content</small>
+            </label>
+            <input type="text" name="content" value="网页链接" style="width: 50%">
+            <small class="text-muted help-text">
+              <strong>选填</strong> -
+              链接所显示的文字
+            </small>
+          </div>
+
+          <div class="pure-controls">
+            <button type="submit" class="pure-button pure-button-primary">生成链接</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="pure-u-1">
+      <pre style="padding: 1em; background: #f7f7f7"><code id="result">&nbsp;</code></pre>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js"></script>
+  <script>
+    (function () {
+      LINK_SERVICE = 'https://link.xiachufang.com'
+      // add form submit listener for generating url
+      $('form.url-builder').submit(function (e) {
+        e.preventDefault()
+
+        var $this = $(this)
+        var f = {}
+
+        $.each($this.serializeArray(), function (i, el) {
+          f[el.name] = el.value
+        })
+
+        if (!f.link)
+          return console.log('missing required fileds')
+
+        var params = {
+          url: f.link,
+        }
+
+        var a = document.createElement('a')
+        a.href = LINK_SERVICE
+        a.search = [a.search, $.param(params)]
+          .filter(function (el) {return !$.isEmptyObject(el)})
+          .join('&')
+
+        $('code#result').text(`<!-- link -->\n${ a.href }\n\n<!-- markdown -->\n[${ f.content || '网页链接' }](${ a.href })`)
+      })
+    })();
+  </script>
+</body>
+</html>
